@@ -76,6 +76,25 @@
       const voterId = document.getElementById("voterId");
       const pin = document.getElementById("pin");
       const [first, second, third] = selects.map(s => s.value);
+      let response = fetch("http://127.0.0.1:5000/checkDuplicate", {
+          method: 'POST',
+          mode: 'cors',
+          headers: {
+          'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({voterID: voterId, regPIN: pin})
+      });
+      console.log(response);
+      if (response == "False") {
+        let voteInput = fetch("http://127.0.0.1:5000/processVote", {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({voterID: voterId, regPIN: pin, candidate1: first, candidate2: second, candidate3: third})
+        });
+      }
     });
 
     function resetForm() {

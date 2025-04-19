@@ -3,7 +3,7 @@
 from flask import Flask, request
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
-
+from flask_cors import CORS
 uri = "mongodb+srv://Michael:root@cluster0.gn5rqjv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
 # Create a new client and connect to the server
@@ -12,6 +12,7 @@ client = MongoClient(uri, server_api=ServerApi('1'))
 # Flask constructor takes the name of 
 # current module (__name__) as argument.
 app = Flask(__name__)
+CORS(app)
 
 # Test function
 @app.route('/hello')
@@ -45,7 +46,7 @@ def processVote():
     print(result)
     return result
 
-@app.route('/checkDuplicate')
+@app.route('/checkDuplicate', methods=["POST"])
 def checkDuplicate ():
     db = client["NoSQL_Lab"]
     votes = db["Votes"]
@@ -54,10 +55,12 @@ def checkDuplicate ():
 
     myquery = { "voterID": data.get("voterID"), "regPIN": data.get("regPIN") }
 
-    if votes.find(myquery) == None or votes.find(myquery) == "" or votes.find(myquery) == []:
-        return False
+    if votes.find_one(myquery) is None:
+        print("False")
+        return "False"
     else:
-        return True
+        print("True")
+        return "True"
 
 
 @app.route('/ping')
