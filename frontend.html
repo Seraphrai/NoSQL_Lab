@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NoSQL Lab</title>
+</head>
+<body>
+
+  <h2>Voting Form</h2>
+  <p>Please enter your voter ID and registration Pin. These are found on the card that you were given by your local election agent.</p>
+
+  <form id="voteForm">
+    <div>
+      <div>
+        <label for="voterId">Voter ID</label>
+        <input type="text" id="voterId" name="voterId" placeholder="Enter your Voter ID" required />
+      </div>
+      <div>
+        <label for="pin">Registration PIN</label>
+        <input type="password" id="pin" name="pin" placeholder="Enter your Registration Pin" required />
+      </div>
+    </div>
+
+    <div >
+      <label for="choice1">1st Choice</label>
+      <select id="choice1" required></select>
+    </div>
+    <div >
+      <label for="choice2">2nd Choice</label>
+      <select id="choice2" required></select>
+    </div>
+    <div >
+      <label for="choice3">3rd Choice</label>
+      <select id="choice3" required></select>
+    </div>
+
+    <button type="submit" class="submit-btn">Submit Vote</button>
+    <button type="button" class="reset-btn" onclick="resetForm()">Start Over</button>
+  </form>
+
+  <script>
+    const candidates = ["Wiliam Henry Harrison", "Taylor Swift", "Abraham Lincoln", "Mr. Bean", "George Washington"];
+    const selects = [document.getElementById('choice1'), document.getElementById('choice2'), document.getElementById('choice3')];
+
+    // Populate all options
+    function populateSelects() {
+      selects.forEach(select => {
+        select.innerHTML = "";
+        candidates.forEach(candidate => {
+          const option = document.createElement("option");
+          option.value = candidate;
+          option.text = candidate;
+          select.appendChild(option);
+        });
+      });
+    }
+
+    // Prevent duplicate selections
+    function updateOptions() {
+      const selectedValues = selects.map(s => s.value);
+      selects.forEach((select, index) => {
+        const currentVal = select.value;
+        Array.from(select.options).forEach(option => {
+          option.disabled = selectedValues.includes(option.value) && option.value !== currentVal;
+        });
+      });
+    }
+
+    selects.forEach(select => {
+      select.addEventListener("change", updateOptions);
+    });
+
+    document.getElementById("voteForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const voterId = document.getElementById("voterId");
+      const pin = document.getElementById("pin");
+      const [first, second, third] = selects.map(s => s.value);
+    });
+
+    function resetForm() {
+      document.getElementById("voteForm").reset();
+      populateSelects();
+      updateOptions();
+    }
+
+    populateSelects();
+    updateOptions();
+  </script>
+
+</body>
+</html>
