@@ -71,12 +71,12 @@
       select.addEventListener("change", updateOptions);
     });
 
-    document.getElementById("voteForm").addEventListener("submit", function(e) {
+    document.getElementById("voteForm").addEventListener("submit", async function(e) {
       e.preventDefault();
-      const voterId = document.getElementById("voterId");
-      const pin = document.getElementById("pin");
+      const voterId = document.getElementById("voterId").value;
+      const pin = document.getElementById("pin").value;
       const [first, second, third] = selects.map(s => s.value);
-      let response = fetch("http://127.0.0.1:5000/checkDuplicate", {
+      let response = await fetch("http://127.0.0.1:5000/checkDuplicate", {
           method: 'POST',
           mode: 'cors',
           headers: {
@@ -84,9 +84,11 @@
           },
           body: JSON.stringify({voterID: voterId, regPIN: pin})
       });
-      console.log(response);
-      if (response == "False") {
-        let voteInput = fetch("http://127.0.0.1:5000/processVote", {
+
+      const isDuplicate = await response.text();
+
+      if (isDuplicate == "False") {
+        await fetch("http://127.0.0.1:5000/processVote", {
             method: 'POST',
             mode: 'cors',
             headers: {
@@ -94,6 +96,7 @@
             },
             body: JSON.stringify({voterID: voterId, regPIN: pin, candidate1: first, candidate2: second, candidate3: third})
         });
+        alert("Your vote has been submitted!");
       }
     });
 
