@@ -43,8 +43,7 @@ def processVote():
 
     result = votes.insert_one(vote)
     
-    print(result)
-    return result
+    return str(result)
 
 @app.route('/checkDuplicate', methods=["POST"])
 def checkDuplicate ():
