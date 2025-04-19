@@ -40,7 +40,7 @@
   </form>
 
   <script>
-    const candidates = ["Wiliam Henry Harrison", "Taylor Swift", "Abraham Lincoln", "Mr. Bean", "George Washington"];
+    const candidates = ["", "Wiliam Henry Harrison", "Taylor Swift", "Abraham Lincoln", "Mr. Bean", "George Washington"];
     const selects = [document.getElementById('choice1'), document.getElementById('choice2'), document.getElementById('choice3')];
 
     // Populate all options
@@ -62,7 +62,7 @@
       selects.forEach((select, index) => {
         const currentVal = select.value;
         Array.from(select.options).forEach(option => {
-          option.disabled = selectedValues.includes(option.value) && option.value !== currentVal;
+          option.disabled = selectedValues.includes(option.value) && option.value !== currentVal & option.value !== "";
         });
       });
     }
