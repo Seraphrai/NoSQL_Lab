@@ -13,9 +13,7 @@ client = MongoClient(uri, server_api=ServerApi('1'))
 # current module (__name__) as argument.
 app = Flask(__name__)
 
-# The route() function of the Flask class is a decorator, 
-# which tells the application which URL should call 
-# the associated function.
+# Test function
 @app.route('/hello')
 def hello_world():
     return 'Hello World'
@@ -45,6 +43,21 @@ def processVote():
     result = votes.insert_one(vote)
     
     print(result)
+    return result
+
+@app.route('/checkDuplicate')
+def checkDuplicate ():
+    db = client["NoSQL_Lab"]
+    votes = db["Votes"]
+
+    data = request.get_json()
+
+    myquery = { "voterID": data.get("voterID"), "regPIN": data.get("regPIN") }
+
+    if votes.find(myquery) == None or votes.find(myquery) == "" or votes.find(myquery) == []:
+        return False
+    else:
+        return True
 
 
 @app.route('/ping')
@@ -53,13 +66,12 @@ def pingServer ():
     try:
         client.admin.command('ping')
         print("Pinged your deployment. You successfully connected to MongoDB!")
+        return("Pinged your deployment. You successfully connected to MongoDB!")
     except Exception as e:
         print(e)
 
 
 # main driver function
 if __name__ == '__main__':
-
-    # run() method of Flask class runs the application 
-    # on the local development server.
+    # runs application
     app.run()
