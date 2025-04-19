@@ -1,6 +1,6 @@
 # Importing flask module in the project is mandatory
 # An object of Flask class is our WSGI application.
-from flask import Flask
+from flask import Flask, request
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 
@@ -19,6 +19,33 @@ app = Flask(__name__)
 @app.route('/hello')
 def hello_world():
     return 'Hello World'
+
+@app.route('/processVote', methods=["POST"])
+def processVote():
+
+    data = request.get_json()
+
+    db = client["NoSQL_Lab"]
+    votes = db["Votes"]
+
+    voterID = data.get("voterID")
+    regPIN = data.get("regPIN")
+    candidate1 = data.get("candidate1")
+    candidate2 = data.get("candidate2")
+    candidate3 = data.get("candidate3")
+
+    vote = {
+        "voterID": voterID,
+        "regPIN": regPIN,
+        "candidate1": candidate1,
+        "candidate2": candidate2,
+        "candidate3": candidate3 
+    }
+
+    result = votes.insert_one(vote)
+    
+    print(result)
+
 
 @app.route('/ping')
 def pingServer ():
