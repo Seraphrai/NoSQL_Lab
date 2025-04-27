@@ -4,6 +4,7 @@ from flask import Flask, request
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from flask_cors import CORS
+import datetime
 uri = "mongodb+srv://Michael:root@cluster0.gn5rqjv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
 # Create a new client and connect to the server
@@ -43,8 +44,8 @@ def processVote():
     regPIN = data.get("regPIN")
     electionID = data.get("election")
     electionName = data.get("electionName")
-    electionDate = data.get("electionDate")
-    timestamp = data.get("timestamp")
+    electionDate = str(datetime.date.today())
+    timestamp = str(datetime.now().timestamp())
     candidate1ID = data.get("candidate1ID")
     candidate2ID = data.get("candidate2ID")
     candidate3ID = data.get("candidate3ID")

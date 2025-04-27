@@ -19,6 +19,14 @@
       <div>
         <label for="pin">Registration PIN</label>
         <input type="password" id="pin" name="pin" placeholder="Enter your Registration Pin" required />
+        <div>
+          <label for="pin">Electrion ID</label>
+          <input type="text" id="electionId" name="electionId" placeholder="Enter the Election ID" required />
+        </div>
+        <div>
+          <label for="pin">Election Name</label>
+          <input type="text" id="electionName" name="electionName" placeholder="Enter the Election Name" required />
+        </div>
       </div>
     </div>
 
@@ -40,7 +48,15 @@
   </form>
 
   <script>
-    const candidates = ["", "Wiliam Henry Harrison", "Taylor Swift", "Abraham Lincoln", "Mr. Bean", "George Washington"];
+    const candidates = [
+    { name: "", id: "", party: "" },
+    { name: "William Henry Harrison", id: "n1", party: "None" },
+    { name: "Taylor Swift", id: "n2", party: "Freedom" },
+    { name: "Abraham Lincoln", id: "n3", party: "Founder" },
+    { name: "Mr. Bean", id: "n4", party: "Comedy" },
+    { name: "George Washington", id: "n5", party: "Founder" }
+    ];    
+    
     const selects = [document.getElementById('choice1'), document.getElementById('choice2'), document.getElementById('choice3')];
 
     // Populate all options
@@ -50,7 +66,7 @@
         candidates.forEach(candidate => {
           const option = document.createElement("option");
           option.value = candidate;
-          option.text = candidate;
+          option.text = `Name: ${candidate.name}, ID: ${candidate.id}, Party: ${candidate.party}`;
           select.appendChild(option);
         });
       });
@@ -75,7 +91,11 @@
       e.preventDefault();
       const voterId = document.getElementById("voterId").value;
       const pin = document.getElementById("pin").value;
-      const [first, second, third] = selects.map(s => s.value);
+      // 
+      const [firstName, secondName, thirdName] = selects.map(s => s.value.name);
+      const [firstId, secondId, thirdId] = selects.map(s => s.value.id);
+      const [firstParty, secondParty, thirdParty] = selects.map(s => s.value.party);
+
       let response = await fetch("http://127.0.0.1:5000/checkDuplicate", {
           method: 'POST',
           mode: 'cors',
@@ -94,7 +114,10 @@
             headers: {
             'Content-Type': 'application/json'
             },
-            body: JSON.stringify({voterID: voterId, regPIN: pin, candidate1: first, candidate2: second, candidate3: third})
+            body: JSON.stringify({voterID: voterId, regPIN: pin, 
+              candidate1Name: firstName, candidate2Name: secondName, candidate3Name: thirdName,
+              candidate1ID: firstId, candidate2ID: secondId, candidate3ID: thirdId,
+              candidate1Party: firstParty, candidate2Party: secondParty, candidate3Party: thirdParty})
         });
         alert("Your vote has been submitted!");
       }
