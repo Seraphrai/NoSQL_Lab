@@ -14,6 +14,18 @@ client = MongoClient(uri, server_api=ServerApi('1'))
 app = Flask(__name__)
 CORS(app)
 
+@app.route('/deleteBallot', methods=["POST"])
+def deleteBallot():
+    data = request.get_json()
+    db = client["NoSQL_Lab"]
+    votes = db["Votes"]
+    voterID = data.get("voterID")  
+    regPIN = data.get("regPIN")
+
+    success = votes.delete_one({"voter.voteID": voterID, "voter.regPIN": regPIN})
+
+    return success
+
 # Test function
 @app.route('/hello')
 def hello_world():
@@ -29,19 +41,42 @@ def processVote():
 
     voterID = data.get("voterID")
     regPIN = data.get("regPIN")
-    candidate1 = data.get("candidate1")
-    candidate2 = data.get("candidate2")
-    candidate3 = data.get("candidate3")
+    electionID = data.get("election")
+    electionName = data.get("electionName")
+    electionDate = data.get("electionDate")
+    timestamp = data.get("timestamp")
+    candidate1ID = data.get("candidate1ID")
+    candidate2ID = data.get("candidate2ID")
+    candidate3ID = data.get("candidate3ID")
+    candidate1Name = data.get("candidate1Name")
+    candidate2Name = data.get("candidate2Name")
+    candidate3Name = data.get("candidate3Name")
+    candidate1Party = data.get("candidate1Party")
+    candidate2Party = data.get("candidate2Party")
+    candidate3Party = data.get("candidate3Party")
 
-    vote = {
-        "voterID": voterID,
-        "regPIN": regPIN,
-        "candidate1": candidate1,
-        "candidate2": candidate2,
-        "candidate3": candidate3 
+    ballot = {
+        "voter":{
+            "voterID": voterID,
+            "regPIN": regPIN
+        },
+
+        "election": {
+            "electionID": electionID,
+            "name": electionName, 
+            "date": electionDate
+        },
+
+        "timestamp": timestamp,
+        
+        "rankings": [
+            {"rank": 1, "nominee": { "nomineeID": candidate1ID, "name": candidate1Name, "party": candidate1Party}},
+            {"rank": 1, "nominee": { "nomineeID": candidate2ID, "name": candidate2Name, "party": candidate2Party}},
+            {"rank": 1, "nominee": { "nomineeID": candidate3ID, "name": candidate3Name, "party": candidate3Party}}
+        ]
     }
 
-    result = votes.insert_one(vote)
+    result = votes.insert_one(ballot)
     
     return str(result)
 
