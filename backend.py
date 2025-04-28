@@ -5,6 +5,8 @@ from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from flask_cors import CORS
 from datetime import datetime
+from bson.json_util import dumps
+from bson.json_util import loads
 uri = "mongodb+srv://Michael:root@cluster0.gn5rqjv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
 # Create a new client and connect to the server
@@ -21,8 +23,7 @@ def retrieveBallot():
     db = client["NoSQL_Lab"]
     votes = db["Votes"]
     voterID = data.get("voterID")  
-
-    return votes.find({"voter.voterID": voterID})
+    return loads(dumps(votes.find({"voter.voterID": voterID})))
 
 @app.route('/deleteBallot', methods=["POST"])
 def deleteBallot():
@@ -39,6 +40,8 @@ def deleteBallot():
 # Test function
 @app.route('/hello')
 def hello_world():
+    db = client["NoSQL_Lab"]
+    votes = db["Votes"]
     return 'Hello World'
 
 @app.route('/processVote', methods=["POST"])
