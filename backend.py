@@ -33,8 +33,7 @@ def deleteBallot():
     votes = db["Votes"]
     voterID = data.get("voterID")  
     regPIN = data.get("regPIN")
-
-    success = votes.delete_one({"voter.voteID": voterID, "voter.regPIN": regPIN})
+    success = votes.delete_one({"voter.voterID": voterID, "voter.regPIN": regPIN})
 
     return success
 

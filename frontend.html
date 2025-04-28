@@ -45,12 +45,17 @@
 
     <button type="submit" class="submit-btn" onclick="">Submit Vote</button>
     <button type="button" class="reset-btn" onclick="resetForm()">Start Over</button>
-    <button type="delete" class="delete-btn" onClick="deleteBallot(event)">Delete Ballot</button>
   </form>
 
   <h2>Retrieve Ballots</h2>
   <input type="text" id="retrieveInput" placeholder="Enter Voter ID" />
   <button onclick="retrieveBallots()">Get Ballots</button>
+  <div id="ballotsList"></div>
+
+  <h2>Delete Ballot</h2>
+  <input type="text" id="deleteID" placeholder="Enter Voter ID" />
+  <input type="text" id="deletePIN" placeholder="Enter regPIN" />
+  <button onclick="deleteBallot()">DELETE</button>
   <div id="ballotsList"></div>
 
   <script>
@@ -131,10 +136,9 @@
       select.addEventListener("change", updateOptions);
     });
 
-    async function deleteBallot(event) {
-      event.preventDefault();
-      const voterId = document.getElementById('voterId').value;
-      const pin = document.getElementById('pin').value;
+    async function deleteBallot() {
+      const voterId = document.getElementById('deleteID').value;
+      const pin = document.getElementById('deletePIN').value;
       const response = await fetch(`http://127.0.0.1:5000/deleteBallot`, {
         method: 'POST',
         headers: {
