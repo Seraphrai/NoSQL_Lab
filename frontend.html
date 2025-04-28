@@ -65,7 +65,7 @@
         select.innerHTML = "";
         candidates.forEach(candidate => {
           const option = document.createElement("option");
-          option.value = candidate;
+          option.value = candidate.id;
           option.text = `Name: ${candidate.name}, ID: ${candidate.id}, Party: ${candidate.party}`;
           select.appendChild(option);
         });
@@ -92,7 +92,8 @@
       const voterId = document.getElementById("voterId").value;
       const pin = document.getElementById("pin").value;
       const selectedCandidates = selects.map(select =>  candidates.find(candidate => candidate.id === select.value));
-      
+      const electionId = document.getElementById("electionId").value;
+      const electionName = document.getElementById("electionName").value;
       const [first, second, third] = selectedCandidates;
       
       const firstName = first.name;
@@ -132,6 +133,21 @@
               candidate1Party: firstParty, candidate2Party: secondParty, candidate3Party: thirdParty})
         });
         alert("Your vote has been submitted!");
+      }
+      else {
+        await fetch("http://127.0.0.1:5000/updateVote", {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({voterID: voterId, regPIN: pin, 
+              electionID: electionId, electionName: electionName,
+              candidate1Name: firstName, candidate2Name: secondName, candidate3Name: thirdName,
+              candidate1ID: firstId, candidate2ID: secondId, candidate3ID: thirdId,
+              candidate1Party: firstParty, candidate2Party: secondParty, candidate3Party: thirdParty})
+        });
+        alert("Your vote has been updated!");
       }
     });
 
