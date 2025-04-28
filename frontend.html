@@ -90,18 +90,16 @@
 
     async function retrieveBallots() {
       const voterId = document.getElementById('retrieveInput').value.trim();
-      
+    
       //call api here
       const matchedBallots =  await fetch("http://127.0.0.1:5000/retrieveBallot", {
-        method: 'GET',
+        method: 'POST',
         mode: 'cors',
         headers: {
         'Content-Type': 'application/json'
         },
         body: JSON.stringify({voterID: voterId})
-      });;
-
-      matchedBallots = JSON.parse(matchedBallots);
+      });
     
       const listDiv = document.getElementById('ballotsList');
       listDiv.innerHTML = "";

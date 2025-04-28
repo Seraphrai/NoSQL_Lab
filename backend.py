@@ -17,13 +17,13 @@ client = MongoClient(uri, server_api=ServerApi('1'))
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/retrieveBallot')
+@app.route('/retrieveBallot', methods=["POST"])
 def retrieveBallot():
     data = request.get_json()
     db = client["NoSQL_Lab"]
     votes = db["Votes"]
-    voterID = data.get("voterID")  
-    return loads(dumps(votes.find({"voter.voterID": voterID})))
+    voterID = data.get("voterID") 
+    return str(loads(dumps(votes.find({"voter.voterID": voterID})))[0])
 
 @app.route('/deleteBallot', methods=["POST"])
 def deleteBallot():
