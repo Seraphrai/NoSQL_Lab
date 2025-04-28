@@ -43,8 +43,9 @@
       <select id="choice3" required></select>
     </div>
 
-    <button type="submit" class="submit-btn">Submit Vote</button>
+    <button type="submit" class="submit-btn" onclick="">Submit Vote</button>
     <button type="button" class="reset-btn" onclick="resetForm()">Start Over</button>
+    <button type="delete" class="delete-btn" onClick="deleteBallot(event)">Delete Ballot</button>
   </form>
 
   <h2>Retrieve Ballots</h2>
@@ -92,7 +93,7 @@
       const voterId = document.getElementById('retrieveInput').value.trim();
     
       //call api here
-      const matchedBallots =  await fetch("http://127.0.0.1:5000/retrieveBallot", {
+      const response =  await fetch("http://127.0.0.1:5000/retrieveBallot", {
         method: 'POST',
         mode: 'cors',
         headers: {
@@ -101,38 +102,53 @@
         body: JSON.stringify({voterID: voterId})
       });
     
+      matchedBallot = await response.json();
+
       const listDiv = document.getElementById('ballotsList');
       listDiv.innerHTML = "";
     
-      if (matchedBallots.length === 0) {
-        listDiv.innerText = "No ballots found for this voter ID.";
+      if (!matchedBallot) {
+        listDiv.innerText = "No ballot found for this voter ID.";
       } else {
-        matchedBallots.forEach(b => {
-          const ballotDiv = document.createElement('div');
-          ballotDiv.textContent = `Election: ${b.electionName}`;
-          ballotDiv.addEventListener("click", function() {
-            loadBallotIntoForm(b);
-          });
-          listDiv.appendChild(ballotDiv);
-        });
+        loadBallotIntoForm(matchedBallot);    
       }
     }
 
     function loadBallotIntoForm(ballot) {
-      document.getElementById("voterId").value = ballot.voterID;
-      document.getElementById("pin").value = ballot.regPIN;
-      document.getElementById("electionId").value = ballot.electionID;
-      document.getElementById("electionName").value = ballot.electionName;
+      console.log(ballot.voter.voterID)
+      document.getElementById("voterId").value = ballot.voter.voterID;
+      document.getElementById("pin").value = ballot.voter.regPIN;
+      document.getElementById("electionId").value = ballot.election.electionID;
+      document.getElementById("electionName").value = ballot.election.name;
     
-      document.getElementById("choice1").value = ballot.candidate1ID;
-      document.getElementById("choice2").value = ballot.candidate2ID;
-      document.getElementById("choice3").value = ballot.candidate3ID;
+      document.getElementById("choice1").value = ballot.rankings[0].nominee.nomineeID;
+      document.getElementById("choice2").value = ballot.rankings[1].nominee.nomineeID;
+      document.getElementById("choice3").value = ballot.rankings[2].nominee.nomineeID;
     }
     
 
     selects.forEach(select => {
       select.addEventListener("change", updateOptions);
     });
+
+    async function deleteBallot(event) {
+      event.preventDefault();
+      const voterId = document.getElementById('voterId').value;
+      const pin = document.getElementById('pin').value;
+      const response = await fetch(`http://127.0.0.1:5000/deleteBallot`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({voterID: voterId, regPIN: pin})
+      });
+      const result = await response.json();
+      if (result.success) {
+        alert(`Ballot with ID: ${ballotId} deleted successfully!`);
+      } else {
+        alert(`Error deleting ballot with ID: ${ballotId}`);
+      }
+    }
 
     document.getElementById("voteForm").addEventListener("submit", async function(e) {
       e.preventDefault();

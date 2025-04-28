@@ -1,6 +1,6 @@
 # Importing flask module in the project is mandatory
 # An object of Flask class is our WSGI application.
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from flask_cors import CORS
@@ -23,7 +23,8 @@ def retrieveBallot():
     db = client["NoSQL_Lab"]
     votes = db["Votes"]
     voterID = data.get("voterID") 
-    return str(loads(dumps(votes.find({"voter.voterID": voterID})))[0])
+    return dumps(votes.find_one({"voter.voterID": voterID}))
+
 
 @app.route('/deleteBallot', methods=["POST"])
 def deleteBallot():
