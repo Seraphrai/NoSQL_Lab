@@ -91,10 +91,21 @@
       e.preventDefault();
       const voterId = document.getElementById("voterId").value;
       const pin = document.getElementById("pin").value;
-      // 
-      const [firstName, secondName, thirdName] = selects.map(s => s.value.name);
-      const [firstId, secondId, thirdId] = selects.map(s => s.value.id);
-      const [firstParty, secondParty, thirdParty] = selects.map(s => s.value.party);
+      const selectedCandidates = selects.map(select =>  candidates.find(candidate => candidate.id === select.value));
+      
+      const [first, second, third] = selectedCandidates;
+      
+      const firstName = first.name;
+      const secondName = second.name;
+      const thirdName = third.name;
+      
+      const firstId = first.id;
+      const secondId = second.id;
+      const thirdId = third.id;
+      
+      const firstParty = first.party;
+      const secondParty = second.party;
+      const thirdParty = third.party;
 
       let response = await fetch("http://127.0.0.1:5000/checkDuplicate", {
           method: 'POST',
@@ -115,6 +126,7 @@
             'Content-Type': 'application/json'
             },
             body: JSON.stringify({voterID: voterId, regPIN: pin, 
+              electionID: electionId, electionName: electionName,
               candidate1Name: firstName, candidate2Name: secondName, candidate3Name: thirdName,
               candidate1ID: firstId, candidate2ID: secondId, candidate3ID: thirdId,
               candidate1Party: firstParty, candidate2Party: secondParty, candidate3Party: thirdParty})
