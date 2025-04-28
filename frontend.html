@@ -20,11 +20,11 @@
         <label for="pin">Registration PIN</label>
         <input type="password" id="pin" name="pin" placeholder="Enter your Registration Pin" required />
         <div>
-          <label for="pin">Electrion ID</label>
+          <label for="electionId">Electrion ID</label>
           <input type="text" id="electionId" name="electionId" placeholder="Enter the Election ID" required />
         </div>
         <div>
-          <label for="pin">Election Name</label>
+          <label for="electionName">Election Name</label>
           <input type="text" id="electionName" name="electionName" placeholder="Enter the Election Name" required />
         </div>
       </div>
@@ -46,6 +46,11 @@
     <button type="submit" class="submit-btn">Submit Vote</button>
     <button type="button" class="reset-btn" onclick="resetForm()">Start Over</button>
   </form>
+
+  <h2>Retrieve Ballots</h2>
+  <input type="text" id="retrieveInput" placeholder="Enter Voter ID" />
+  <button onclick="retrieveBallots()">Get Ballots</button>
+  <div id="ballotsList"></div>
 
   <script>
     const candidates = [
@@ -82,6 +87,41 @@
         });
       });
     }
+
+    function retrieveBallots() {
+      const voterId = document.getElementById('retrieveInput').value.trim();
+      
+      //call api here
+      const matchedBallots = "";
+    
+      const listDiv = document.getElementById('ballotsList');
+      listDiv.innerHTML = "";
+    
+      if (matchedBallots.length === 0) {
+        listDiv.innerText = "No ballots found for this voter ID.";
+      } else {
+        matchedBallots.forEach(b => {
+          const ballotDiv = document.createElement('div');
+          ballotDiv.textContent = `Election: ${b.electionName}`;
+          ballotDiv.addEventListener("click", function() {
+            loadBallotIntoForm(b);
+          });
+          listDiv.appendChild(ballotDiv);
+        });
+      }
+    }
+
+    function loadBallotIntoForm(ballot) {
+      document.getElementById("voterId").value = ballot.voterID;
+      document.getElementById("pin").value = ballot.regPIN;
+      document.getElementById("electionId").value = ballot.electionID;
+      document.getElementById("electionName").value = ballot.electionName;
+    
+      document.getElementById("choice1").value = ballot.candidate1ID;
+      document.getElementById("choice2").value = ballot.candidate2ID;
+      document.getElementById("choice3").value = ballot.candidate3ID;
+    }
+    
 
     selects.forEach(select => {
       select.addEventListener("change", updateOptions);
